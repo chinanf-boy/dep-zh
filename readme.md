@@ -35,7 +35,10 @@
 - **docs**
 - [x] [介绍](./docs/introduction.zh.md)
 - [x] [安装](./docs/installation.zh.md)
-- [ ] [卸载](./docs/uninstalling.zh.md)
+- [x] [卸载](./docs/uninstalling.zh.md)
+- [x] [创建一个新项目](./docs/new-project.zh.md)
+- [ ] [迁移到Dep](./docs/migrating.zh.md)
+
 
 
 
