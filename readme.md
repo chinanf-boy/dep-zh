@@ -32,7 +32,12 @@
 <!-- doc-templite END generated -->
 
 - [x] readme
-- [ ] [docs/**]
+- **docs**
+- [x] [介绍](./docs/introduction.zh.md)
+- [x] [安装](./docs/installation.zh.md)
+- [ ] [卸载](./docs/uninstalling.zh.md)
+
+
 
 ### 贡献
 

@@ -1,5 +1,5 @@
 ---
-title: Uninstalling Dep
+title: 卸载 Dep
 ---
 ## 卸载
 
