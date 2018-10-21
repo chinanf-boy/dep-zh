@@ -6,11 +6,13 @@ Like all complex, network-oriented software, dep has known failure modes. These 
 
 ## I/O errors
 
-dep reads from the network, and reads and writes to disk, and is thus subject to all the typical errors that are possible with such activities: full disks, failed disks, lack of permissions, network partitions, firewalls, etc. However, there are three classes of I/O errors that are worth addressing specifically:
+dep reads from the network, and reads and writes to disk, and is thus subject to all the typical errors that are possible with such activities.
 
-* Network failures
-* Bad local cache state
-* `vendor` write errors
+full disks, failed disks, lack of permissions, network partitions, firewalls, etc. However, there are three classes of I/O errors that are worth addressing specifically:
+
+- Network failures
+- Bad local cache state
+- `vendor` write errors
 
 In general, these problems aren't things we can reasonably program around in dep. Therefore, they can't be considered bugs for us to fix. Fortunately, most of these problems have straightforward remediations.
 
@@ -20,11 +22,11 @@ In general, these problems aren't things we can reasonably program around in dep
 
 dep talks to the network at several different points. These vary somewhat depending on source (VCS) type and local disk state, but this list of operations is generally instructive:
 
-* When dep cannot [statically deduce](deduction.md#static-deduction) the source root of an import path, it issues a `go-get` HTTP metadata request to a URL constructed from the import path.
-* Retrieving the list of available versions for a source (think `git ls-remote`) necessarily requires network activity.
-* Initially downloading (in git terms, `git clone`) an upstream source into the local cache also necessarily requires network activity.
-* Updating a local cache (in git terms, `git fetch`) with the latest changes from an upstream source.
-* Writing out code trees under `vendor` is typically done from the local cache, but under some circumstances a tarball may be fetched on-the-fly from a remote source.
+- When dep cannot [statically deduce](deduction.md#static-deduction) the source root of an import path, it issues a `go-get` HTTP metadata request to a URL constructed from the import path.
+- Retrieving the list of available versions for a source (think `git ls-remote`) necessarily requires network activity.
+- Initially downloading (in git terms, `git clone`) an upstream source into the local cache also necessarily requires network activity.
+- Updating a local cache (in git terms, `git fetch`) with the latest changes from an upstream source.
+- Writing out code trees under `vendor` is typically done from the local cache, but under some circumstances a tarball may be fetched on-the-fly from a remote source.
 
 Network failures that you actually may observe are biased towards the earlier items in the list, simply because those operations tend to happen first: you generally don't see update failures as much as version-listing failures, because they usually have the same underlying cause (source host is down, network partition, etc.), but the version-list request happens first on most paths.
 
@@ -32,19 +34,19 @@ Network failures that you actually may observe are biased towards the earlier it
 
 Although most network failures are ephemeral, there are three well-defined cases where they're more permanent:
 
-* **The network on which the source resides is permanently unreachable from the user's location:** in practice, this generally means one of two things: you've forgotten to log into your company VPN, or you're behind [the GFW](https://en.wikipedia.org/wiki/Great_Firewall). In the latter case, setting the _de facto_ standard HTTP proxy environment variables that [`http.ProxyFromEnvironment()`](https://golang.org/pkg/net/http/#ProxyFromEnvironment) respects will cause dep's `go-get` HTTP metadata requests, as well as git, bzr, and hg subcommands, to utilize the proxy.
+- **The network on which the source resides is permanently unreachable from the user's location:** in practice, this generally means one of two things: you've forgotten to log into your company VPN, or you're behind [the GFW](https://en.wikipedia.org/wiki/Great_Firewall). In the latter case, setting the _de facto_ standard HTTP proxy environment variables that [`http.ProxyFromEnvironment()`](https://golang.org/pkg/net/http/#ProxyFromEnvironment) respects will cause dep's `go-get` HTTP metadata requests, as well as git, bzr, and hg subcommands, to utilize the proxy.
 
-  * Remediation is also exactly the same when the custom `go-get` HTTP metadata service for a source is similarly unreachable. The failure messages, however, will look like [deduction failures](#deduction-failures).
+  - Remediation is also exactly the same when the custom `go-get` HTTP metadata service for a source is similarly unreachable. The failure messages, however, will look like [deduction failures](#deduction-failures).
 
-* **The source has been permanently deleted or moved:** these are [left-pad](https://www.theregister.co.uk/2016/03/23/npm_left_pad_chaos/) events, though note that [GitHub automatically redirects traffic after renames](https://help.github.com/articles/renaming-a-repository/), mitigating the rename problem. But, if an upstream source is removed, dep will be unable to proceed until a new upstream source is established for the import path. To that end:
+- **The source has been permanently deleted or moved:** these are [left-pad](https://www.theregister.co.uk/2016/03/23/npm_left_pad_chaos/) events, though note that [GitHub automatically redirects traffic after renames](https://help.github.com/articles/renaming-a-repository/), mitigating the rename problem. But, if an upstream source is removed, dep will be unable to proceed until a new upstream source is established for the import path. To that end:
 
-  * If you still have a copy of the source repository in your local cache or GOPATH, consider uploading it to a new location (e.g. forking it) and using a [`source`](Gopkg.toml.md#source) rule to point to the fork.
-  * If you don't have a whole repository locally, then extracting the code currently in your `vendor` directory into a new repository and pushing it to a . (Note: this may have licensing implications.)
-  * If you have no instances of the code locally, then there's little that can be done - that code is simply gone, and you'll need to refactor your project.
+  - If you still have a copy of the source repository in your local cache or GOPATH, consider uploading it to a new location (e.g. forking it) and using a [`source`](Gopkg.toml.md#source) rule to point to the fork.
+  - If you don't have a whole repository locally, then extracting the code currently in your `vendor` directory into a new repository and pushing it to a . (Note: this may have licensing implications.)
+  - If you have no instances of the code locally, then there's little that can be done - that code is simply gone, and you'll need to refactor your project.
 
   Future versions of dep will be able to better handle an interim period before a new upstream/forked source is created, or simply living in a world where a given code tree exists solely in your project's `vendor` directory.
 
-* **The user lacks the necessary credentials to interact with a source:** see the [FAQ on configuring credentials](FAQ.md#how-do-i-get-dep-to-authenticate-to-a-git-repo).
+- **The user lacks the necessary credentials to interact with a source:** see the [FAQ on configuring credentials](FAQ.md#how-do-i-get-dep-to-authenticate-to-a-git-repo).
 
 The exact error text will vary depending on which of the operations is running, what type of source dep is trying to communicate with, and what actual network problem has occurred. The error text may not always make it immediately clear which combination of these you're dealing with, but for persistent problems, it should at least reduce the search space.
 
@@ -70,9 +72,9 @@ However, for the most part, **dep automatically discovers and recovers from bad 
 
 There are no known cases where, in the course of normal operations, dep can irreparably corrupt its own local cache. Any such case would be considered a critical bug in dep, and you should report it! If you think you've encountered such a case, it should have the following characteristics:
 
-* The error message you're seeing is consistent with some sort of disk state error in a downloaded source within `$GOPATH/pkg/dep/sources`
-* You can identify a bad state (generally: a vcs "status"-type command will either fail outright, or report a modified working tree) in a subdirectory of `$GOPATH/pkg/dep/sources` suggested by the above error
-* The exact same error recurs after removing the local cache dir and running the same command, **without** prematurely terminating the project (e.g. via Ctrl-C)
+- The error message you're seeing is consistent with some sort of disk state error in a downloaded source within `$GOPATH/pkg/dep/sources`
+- You can identify a bad state (generally: a vcs "status"-type command will either fail outright, or report a modified working tree) in a subdirectory of `$GOPATH/pkg/dep/sources` suggested by the above error
+- The exact same error recurs after removing the local cache dir and running the same command, **without** prematurely terminating the project (e.g. via Ctrl-C)
 
 ### `vendor` write errors
 
@@ -88,8 +90,8 @@ Note: this flow will become more targeted after [vendor verification]() allows d
 
 Known problems in this category include:
 
-* Insufficient space in the temporary directory will cause an error, triggering a rollback. However, because the rollback process cleans up files written so-far, the temporary partition won't actually be full after dep exits, which can be misleading.
-* Attempting to [re]move the original `vendor` directory can fail with permissions errors if any of the files therein are "open", in some editors/on some OSes (particularly Windows). [There's an issue for this]().
+- Insufficient space in the temporary directory will cause an error, triggering a rollback. However, because the rollback process cleans up files written so-far, the temporary partition won't actually be full after dep exits, which can be misleading.
+- Attempting to [re]move the original `vendor` directory can fail with permissions errors if any of the files therein are "open", in some editors/on some OSes (particularly Windows). [There's an issue for this]().
 
 ## Logical failures
 
@@ -109,13 +111,13 @@ _Note: there are [more varied error messages for the small subset of cases](#mal
 
 When a deduction failure occurs on a given import path, the proximal cause will have been one of following five scenarios (arranged from most to least likely):
 
-* The import path was never deducible.
-* **Dynamic deduction failures:**
-  * The import path was, at one time, dynamically deducible, and the metadata service for it is up, but it is unreachable by dep.
-  * The import path was, at one time, dynamically deducible, but the metadata service for it is down.
-* **Static rule changes:**
-  * The import path cannot be statically deduced by the running version of dep, but a newer version of dep has added rules that can statically deduce it.
-  * The import path was once statically deducible, but the running version of dep has discontinued support for it.
+- The import path was never deducible.
+- **Dynamic deduction failures:**
+  - The import path was, at one time, dynamically deducible, and the metadata service for it is up, but it is unreachable by dep.
+  - The import path was, at one time, dynamically deducible, but the metadata service for it is down.
+- **Static rule changes:**
+  - The import path cannot be statically deduced by the running version of dep, but a newer version of dep has added rules that can statically deduce it.
+  - The import path was once statically deducible, but the running version of dep has discontinued support for it.
 
 In all of these cases, your last recourse will be to add a [`source`](Gopkg.toml.md#source) directive to fix the problem. However, these directives are brittle, and should only be used when other options have been exhausted; also, until [this problem is solved](https://github.com/golang/dep/issues/860), even `source` may not be able to help.
 
@@ -129,8 +131,8 @@ Validation of the inputs from the current project are made fast and up front in 
 
 That undeducibility is an immediate and hard blocker, however, has led to this being a sticking point for migration to dep. In particular, there are two issues:
 
-* Several other Go dependency management tools do allow specifying arbitrary VCS/source URLs, and [but support for that via `source` in dep is still pending](https://github.com/golang/dep/issues/860).
-* GitHub Enterprise only implements `go-get` HTTP metadata correctly for the root package of a repository. In practice, this makes all import paths pointing to GHE undeducible, and `source` can't help either without the aforementioned improvement.
+- Several other Go dependency management tools do allow specifying arbitrary VCS/source URLs, and [but support for that via `source` in dep is still pending](https://github.com/golang/dep/issues/860).
+- GitHub Enterprise only implements `go-get` HTTP metadata correctly for the root package of a repository. In practice, this makes all import paths pointing to GHE undeducible, and `source` can't help either without the aforementioned improvement.
 
 If the problem import path is in your current project, but the problem isn't an obvious typo, then you're likely experiencing a dynamic failure, or may need to check the [deduction reference](deduction.md) to understand what what a deducible import path looks like.
 
@@ -160,8 +162,8 @@ The final scenario - dep discontinuing support for a static deduction pattern - 
 
 For the most part, static ("is it one of the handful of hosts we know?") and dynamic ("just do whatever the metadata service tells us to do") deduction are single-pass checks. However, both cases can perform some minor additional validation:
 
-* In static deduction, the rules are necessarily specific to each host, but most enforce allowable characters and schemes in URLs that are known to be required by the underlying host.
-* In dynamic deduction, responses from the metadata service are minimally validated to ensure that the source type and scheme are all supported, and that the URL contains valid characters.
+- In static deduction, the rules are necessarily specific to each host, but most enforce allowable characters and schemes in URLs that are known to be required by the underlying host.
+- In dynamic deduction, responses from the metadata service are minimally validated to ensure that the source type and scheme are all supported, and that the URL contains valid characters.
 
 ### Solving failures
 
@@ -182,14 +184,14 @@ It means that the solver was unable to find a combination of versions for all de
 
 These rules, and specific remediations for failing to meet them, are described in detail in the section on [solver invariants](the-solver.md#solving-invariants). This section is about the steps to take when solving failures occur in general. But, to set context, here's a summary:
 
-* **`[[constraint]]` conflicts:** when projects in the dependency graph disagree on what [versions](Gopkg.toml.md#version-rules) are acceptable for a project, or where to [source](Gopkg.toml.md#source) it from.
-  * Remediation will usually be either changing a `[[constraint]]` or adding an `[[override]]`, but genuine conflicts may require forking and hacking code.
-* **Package validity failure:** when an imported package is quite obviously not capable of being built.
-  * There usually isn't much remediation here beyond "stop importing that," as it indicates something broken at a particular version.
-* **Import comment failure:** when the import path used to address a package differs from the [import comment](https://golang.org/cmd/go/#hdr-Import_path_checking) the package uses to specify how it should be imported.
-  * Remediation is to use the specified import path, instead of whichever one you used.
-* **Case-only import variation failure:** when two equal-except-for-case imports exist in the same build.
-  * Remediation is to pick one case variation to use throughout your project, then manually update all projects in your depgraph to use the new casing.
+- **`[[constraint]]` conflicts:** when projects in the dependency graph disagree on what [versions](Gopkg.toml.md#version-rules) are acceptable for a project, or where to [source](Gopkg.toml.md#source) it from.
+  - Remediation will usually be either changing a `[[constraint]]` or adding an `[[override]]`, but genuine conflicts may require forking and hacking code.
+- **Package validity failure:** when an imported package is quite obviously not capable of being built.
+  - There usually isn't much remediation here beyond "stop importing that," as it indicates something broken at a particular version.
+- **Import comment failure:** when the import path used to address a package differs from the [import comment](https://golang.org/cmd/go/#hdr-Import_path_checking) the package uses to specify how it should be imported.
+  - Remediation is to use the specified import path, instead of whichever one you used.
+- **Case-only import variation failure:** when two equal-except-for-case imports exist in the same build.
+  - Remediation is to pick one case variation to use throughout your project, then manually update all projects in your depgraph to use the new casing.
 
 Let's break down the process of addressing a solving failure into a series of steps:
 

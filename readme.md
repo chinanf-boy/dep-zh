@@ -37,10 +37,17 @@
 - [x] [安装](./docs/installation.zh.md)
 - [x] [卸载](./docs/uninstalling.zh.md)
 - [x] [创建一个新项目](./docs/new-project.zh.md)
-- [ ] [迁移到Dep](./docs/migrating.zh.md)
-
-
-
+- [x] [迁移到 Dep](./docs/migrating.zh.md)
+- [ ] [deduction 是 dep 的算法](./docs/deduction.zh.md)
+- [ ] [求解器](./docs/the-solver.zh.md)
+- [ ] [每日 Dep](./docs/daily-dep.zh.md)
+- [ ] [常见问题](docs/FAQ.zh.md)
+- [ ] [dep 的 环境变量](docs/env-vars.zh.md)
+- [ ] [Gopkg.lock](docs/Gopkg.lock.zh.md)
+- [ ] [Gopkg.toml](docs/Gopkg.toml.zh.md)
+- [ ] [Dep的专门术语](docs/glossary.zh.md)
+- [ ] [ensure-mechanics.md](docs/ensure-mechanics.zh.md)
+- [ ] [failure-modes.md](docs/failure-modes.zh.md)
 
 ### 贡献
 
@@ -63,7 +70,7 @@
 
 `dep`是 Go 的依赖管理工具.它需要 Go 1.9 或更新版本才能编译.
 
-`dep`是"官方实验".Go 工具链,从 1.11 开始,已经(通过实验)采用了一种与`dep`大相径庭的方法.结果是,我们正在继续开发`dep`，但是,考察与开发dep的工作主要作为之后开发工具链中，版本化行为的替代原型.
+`dep`是"官方实验".Go 工具链,从 1.11 开始,已经(通过实验)采用了一种与`dep`大相径庭的方法.结果是,我们正在继续开发`dep`，但是,考察与开发 dep 的工作主要作为之后开发工具链中，版本化行为的替代原型.
 
 有关`dep`的指南和参考资料,查看[文件](https://golang.github.io/dep).
 
@@ -100,4 +107,4 @@ go get -u github.com/golang/dep/cmd/dep
 
 ## 贡献
 
-贡献非常感谢.维护人员积极管理issue列表,并尝试突出适合新手的问题.该项目遵循典型的 GitHub 拉取请求模型.看[CONTRIBUTING.md](CONTRIBUTING.zh.md)中的更多细节.在开始任何工作之前, 请先评论现有问题,或提交新问题.
+贡献非常感谢.维护人员积极管理 issue 列表,并尝试突出适合新手的问题.该项目遵循典型的 GitHub 拉取请求模型.看[CONTRIBUTING.md](CONTRIBUTING.zh.md)中的更多细节.在开始任何工作之前, 请先评论现有问题,或提交新问题.
