@@ -38,16 +38,16 @@
 - [x] [卸载](./docs/uninstalling.zh.md)
 - [x] [创建一个新项目](./docs/new-project.zh.md)
 - [x] [迁移到 Dep](./docs/migrating.zh.md)
-- [ ] [deduction 是 dep 的算法](./docs/deduction.zh.md)
+- [ ] [deduction 是 dep 的导入路径推导算法](./docs/deduction.zh.md)
 - [ ] [求解器](./docs/the-solver.zh.md)
 - [ ] [每日 Dep](./docs/daily-dep.zh.md)
 - [ ] [常见问题](docs/FAQ.zh.md)
-- [ ] [dep 的 环境变量](docs/env-vars.zh.md)
+- [x] [dep 的 环境变量](docs/env-vars.zh.md)
 - [ ] [Gopkg.lock](docs/Gopkg.lock.zh.md)
 - [ ] [Gopkg.toml](docs/Gopkg.toml.zh.md)
-- [ ] [Dep的专门术语](docs/glossary.zh.md)
-- [ ] [ensure-mechanics.md](docs/ensure-mechanics.zh.md)
-- [ ] [failure-modes.md](docs/failure-modes.zh.md)
+- [x] [Dep的专门术语](docs/glossary.zh.md)
+- [ ] [保障机制](docs/ensure-mechanics.zh.md)
+- [ ] [故障模式](docs/failure-modes.zh.md)
 
 ### 贡献
 

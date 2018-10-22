@@ -14,7 +14,7 @@ Environment variables are passed through to subcommands, and therefore can be us
 
 ---
 
-### `DEPCACHEAGE`
+### `depcacheage`
 
 If set to a [duration](https://golang.org/pkg/time/#ParseDuration) (e.g. `24h`), it will enable caching of metadata from source repositories: 
 
