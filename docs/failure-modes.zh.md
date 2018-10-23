@@ -1,4 +1,5 @@
 ---
+id: failure-modes
 title: 故障模式
 ---
 

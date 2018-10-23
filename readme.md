@@ -1,13 +1,11 @@
-# golang/dep [![explain]][source] [![translate-svg]][translate-list]
+# golang/dep [![translate-svg]][translate-list]
 
-<!-- [![size-img]][size] -->
+<!-- [![explain]][source] -->
 
 [explain]: http://llever.com/explain.svg
 [source]: https://github.com/chinanf-boy/Source-Explain
 [translate-svg]: http://llever.com/translate.svg
 [translate-list]: https://github.com/chinanf-boy/chinese-translate-list
-[size-img]: https://packagephobia.now.sh/badge?p=Name
-[size]: https://packagephobia.now.sh/result?p=Name
 
 「 `dep`是 Go 的依赖管理工具.它需要 Go 1.9 或更新版本才能编译. 」
 
@@ -45,7 +43,7 @@
 - [x] [dep 的 环境变量](docs/env-vars.zh.md)
 - [ ] [Gopkg.lock](docs/Gopkg.lock.zh.md)
 - [ ] [Gopkg.toml](docs/Gopkg.toml.zh.md)
-- [x] [Dep的专门术语](docs/glossary.zh.md)
+- [x] [Dep 的专门术语](docs/glossary.zh.md)
 - [ ] [保障机制](docs/ensure-mechanics.zh.md)
 - [ ] [故障模式](docs/failure-modes.zh.md)
 

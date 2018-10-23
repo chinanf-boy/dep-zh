@@ -1,4 +1,5 @@
 ---
+id: ensure-mechanics
 title: 模型 和 机制
 ---
 

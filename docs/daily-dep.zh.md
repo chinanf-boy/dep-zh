@@ -1,5 +1,6 @@
 ---
-title: Daily Dep
+id: daily-dep
+title: 每日 Dep
 ---
 本指南介绍了dep的日常使用.但是,如果你还没有设置Go项目,那么就可以了[创建一个新项目](new-project.md)第一.
 

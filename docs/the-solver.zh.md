@@ -1,5 +1,6 @@
 ---
-title: The Solver
+id: the-solver
+title: 求解器
 ---
 dep的核心是约束求解引擎 -  a[CDCL](https://en.wikipedia.org/wiki/Conflict-Driven_Clause_Learning)风格的求解器(虽然在"CL"部分点亮),专门针对Go包管理领域量身定制.它生活在`github.com/golang/dep/gps`包,并且是确定有效的,可传递完整的依赖图(也就是说,的内容)的工作`Gopkg.lock`)执行.
 

@@ -1,4 +1,5 @@
 ---
+id: 
 title: Gopkg.toml
 ---
 这个`Gopkg.toml`文件最初是由`dep init`主要是手工编辑的.它包含管理DEP行为的几种规则声明:

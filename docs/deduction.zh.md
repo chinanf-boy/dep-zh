@@ -1,5 +1,6 @@
 ---
-title: Import Path Deduction
+id: deduction
+title: 导入路径的推导
 ---
 演绎是dep的算法,用于查看导入路径并确定路径中与源根对应的部分.该算法具有一个静态组件,通过该组件,一小组已知的、流行的主机(如GitHub和Bitbucket)可以推导出它们的根:
 

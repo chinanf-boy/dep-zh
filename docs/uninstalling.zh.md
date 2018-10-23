@@ -1,4 +1,5 @@
 ---
+id: uninstalling
 title: 卸载 Dep
 ---
 

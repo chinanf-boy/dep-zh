@@ -1,5 +1,6 @@
 ---
- title: Gopkg.lock
+id: Gopkg.lock
+title: Gopkg.lock
 ---
 这个`Gopkg.lock`文件是由`dep ensure`和`dep init`. 它的输出是[解函数](ensure-mechanics.md#functional-flow)一个项目的依赖图的传递完成的快照,表示为一系列`[[project]]`诗节.这意味着:
 
