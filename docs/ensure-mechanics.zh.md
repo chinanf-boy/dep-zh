@@ -3,37 +3,37 @@ id: ensure-mechanics
 title: 模型 和 机制
 ---
 
-DEP具有许多分立元件和运动部件,所有这些部件围绕中心模型旋转.该文件解释了模型,然后探讨DEP的主要机制在该模型的背景下.
+Dep具有许多分离的元件和运动部件,所有这些部件围绕中心模型旋转.该文件解释了模型,然后在该模型的背景下探讨Dep的主要机制.
 
 ## 状态与流程
 
-Dep的核心思想是"四状态系统"——用于对包管理器与之交互的盘上状态进行分类和组织的模型.这首先是作为一个连贯的、通用的模型来表达的.[这篇(长)文章](https://medium.com/@sdboyer/so-you-want-to-write-a-package-manager-4ae9c17d9527),虽然四种状态模型中的许多原理是从现有的包管理器中派生出来的.
+Dep的核心思想是"四状态系统"——对磁盘与包管理器交流的状态进行分类和组织的模型. 这个连贯的、通用的模型，首次表述在[这篇(长)文章](https://medium.com/@sdboyer/so-you-want-to-write-a-package-manager-4ae9c17d9527)。 虽然四种状态模型中的许多原理是，从现有的包管理器中派生出来的.
 
 简言之,这四种状态是:
 
-1.  这个[当前项目](glossary.md#current-project)源代码.
-2.  一[显示](glossary.md#manifest)-描述当前项目的依赖性要求的文件.在DEP中,这是[`Gopkg.toml`](Gopkg.toml.md)文件.
-3.  一[锁](glossary.md#lock)-一个包含传递完整的、可再现的依赖图描述的文件.在DEP中,这是[`Gopkg.lock`](Gopkg.lock.md)文件.
-4.  源代码本身的依赖性.在DEP的当前设计中,这是`vendor/`目录.
+1.  [当前项目](glossary.zh.md#current-project)的源代码.
+2.  一个[主内容-manifest](glossary.zh.md#manifest)-描述当前项目的依赖要求的文件.在Dep中,就是[`Gopkg.toml`](Gopkg.toml.zh.md)文件.
+3.  一个[锁-lock](glossary.zh.md#lock)-一个包含传递完整的、可再现的依赖图的描述文件.在Dep中,就是[`Gopkg.lock`](Gopkg.lock.zh.md)文件.
+4.  源代码本身的依赖性.在Dep的当前设计中,就是`vendor/`目录.
 
 我们可以直观地表示这四个状态如下:
 
 ![dep's four states](assets/four-states.png)
 
-### 功能流
+### 功能流程
 
-认为DEP是一种系统,它在这些状态之间的关系上施加单向的、功能性的流动.这些函数将上述状态作为输入和输出,将它们从左向右移动.具体来说,有两个功能:
+把Dep认为是一种系统，有助于你理解,它在这些状态关系之间施加单向的、功能性的流动过程.这些函数将上述状态作为输入和输出, 若将它们从左向右移动.总体,有两个功能:
 
--   一*求解函数*将当前项目中的导入集和规则作为输入`Gopkg.toml`并作为其输出返回一个传递完整的、不可变的依赖图——A中的信息`Gopkg.lock`.
--   一*拍卖功能*在A中获取信息`Gopkg.lock`作为其输入,并确保源文件的磁盘安排,使编译器将使用锁定中指定的版本.
+-   一个是*求解-solving 函数*，将当前项目中的导入集合和规则，作为`Gopkg.toml`的输入, 并返回一个传递完整的、不可变的依赖图的输出——`Gopkg.lock`中的信息.
+-   一个是*vendoring 函数*，将`Gopkg.lock`中获取的信息作为其输入,并确保源文件的磁盘安排,例如编译器应使用**lock**中的指定版本.
 
 我们可以直观地表示这两个函数:
 
 ![dep's two main functions](assets/annotated-func-arrows.png)
 
-这是`dep ensure`-典型的流程,用于`Gopkg.toml`已经存在.当一个项目还没有`Gopkg.toml`,`dep init`可以生成一个.必要的流程保持不变,但改变了输入:而不是从现有的阅读.`Gopkg.toml`文件,`dep init`构造从用户的GopAs推断出的数据中的一个,和/或[来自另一个工具的元数据文件](<>). 换言之,`dep init`自动将项目从其他方法迁移到组织依赖关系.
+这是`dep ensure`-典型的流程,被使用在当`Gopkg.toml`存在时.当一个项目还没有`Gopkg.toml`,`dep init`可以生成一个. 必要的流程保持不变,但改变了输入:不是读取现有的`Gopkg.toml`文件, `dep init`构造，推理出的数据。数据来自用户的GOPATH,和/或者[来自另一个工具的元数据文件](<>). 换言之,`dep init`自动将项目从其他组织依赖的方法迁移到Dep方式.
 
-此图也直接对应于代码.解决函数实际上被分解成一个构造函数和一个方法——我们首先创建一个[`Solver`](https://godoc.org/github.com/golang/dep/gps#Solver)类型,然后调用它的`Solve()`方法.构造函数的输入被封装在一个[`SolveParameters`](https://godoc.org/github.com/golang/dep/gps#SolveParameters)看起来应该很熟悉:
+此图也直接反映了代码. **求解函数**实际上被分解成一个构造和一个方法——我们首先新建一个[`Solver`](https://godoc.org/github.com/golang/dep/gps#Solver)类型,然后调用它的`Solve()`方法. 构造函数的输入是一个[`SolveParameters`](https://godoc.org/github.com/golang/dep/gps#SolveParameters)封装结构, 看起来应该很熟悉:
 
 ```go
 type SolveParameters struct {
@@ -43,40 +43,42 @@ type SolveParameters struct {
 }
 ```
 
-授权功能是[`gps.WriteDepTree()`](https://godoc.org/github.com/golang/dep/gps#WriteDepTree). 虽然需要少量的参数,但相关的参数是[`gps.Lock`](https://godoc.org/github.com/golang/dep/gps#Lock)-表示在A中保存的数据的抽象形式的接口.`Gopkg.lock`.
+**vendoring 函数**是[`gps.WriteDepTree()`](https://godoc.org/github.com/golang/dep/gps#WriteDepTree). 虽然需要少量的参数,但相关的参数也就[`gps.Lock`](https://godoc.org/github.com/golang/dep/gps#Lock)-表示在一个`Gopkg.lock`中保存数据的抽象接口.
 
-四态系统和这些功能流是所有DEP行为建立的基础.如果你想了解DEP的机制,把这个模型放在你的思维的最前沿.
+四状态系统和这些功能流程是所有Dep行为建立的基础. 如果你想了解Dep的机制, 请把这个模型放在你的思维的最前沿.
 
 ### 保持同步
 
-dep的设计目标之一是它的两个"功能"最小化了它们所做的工作,以及它们在各自的输出中引起的变化.因此,这两个函数在预先存在的输出处窥视,以了解实际需要做什么工作:
+dep的设计目标之一, 是它的两个"功能",它们所做的工作,以及它们在各自的输出中引起的变化，都是最小/少的. 因此,这两个函数窥视在之前存在的输出结果, 以了解实际需要做什么工作:
 
--   解决函数检查现有的`Gopkg.lock`以确定其所有输入是否满足.如果是,则可以完全绕过求解函数.如果不是,则解决函数继续进行,但尝试更改为很少的选择.`Gopkg.lock`尽可能.
--   Debug函数已经对每个离散项目进行了哈希处理.`vendor/`看看磁盘上的代码是什么`Gopkg.lock`指示应该是.只有哈希错配的项目才被重写.
+-   **求解-Solving 函数**，检查现有的`Gopkg.lock`, 以确定其所有输入是否满足.如果是,则可以完全绕过求解函数. 如果不是,则求解函数继续进行,但会尝试`Gopkg.lock`尽可能变化很少的'路'.
+-   **vendoring函数**，已经哈希处理了每个离散项目，放在`vendor/`. 并看看`Gopkg.lock`指示的和磁盘上的代码. 只有哈希错配的项目才被重写.
 
-具体地说,DEP定义了一些必须满足的不变量:
+具体地说,Dep定义了一些必须满足的多个不变量:
 
-| Sync invariant | Resolution when desynced | Func |
+| 同步 不变 | 处理 when 不同步 | 函数 |
 | -------------- | ------------------------ | ---- |
-| All [`required`](Gopkg.toml.md#required) statements in `Gopkg.toml` must be present in the [`input-imports`](Gopkg.lock.md#input-imports) list in `Gopkg.lock`. | Re-solve, update `Gopkg.lock` and `vendor/` for projects that changed | Solving |
-| All `import` statements in the current project's non-[`ignored`]((Gopkg.toml.md#ignored)), non-hidden packages must be present in [`input-imports`](Gopkg.lock.md#input-imports) list in `Gopkg.lock`. | Re-solve, update `Gopkg.lock` and `vendor/` for projects that changed | Solving |
-| All [versions in `Gopkg.lock`](Gopkg.lock.md#version-information-revision-version-and-branch) must be acceptable with respect to the `[[constraint]]` or `[[override]]` declarations made in `Gopkg.toml`. | Re-solve, update `Gopkg.lock` and `vendor/` for projects that changed | Solving |
-| The [`pruneopts`](Gopkg.lock.md#pruneopts) of each `[[project]]` in `Gopkg.lock` must equal the declaration in `Gopkg.toml`. | Update `Gopkg.lock` and `vendor/` | Vendoring\* |
-| The [`digest`](Gopkg.lock.md#digest) of each `[[project]]` in `Gopkg.lock` must equal the value derived from hashing the current contents of `vendor/` | Regenerate the projects in `vendor/`, and update `Gopkg.lock` with the new hash digest if necessary | Vendoring |
+|  `Gopkg.toml`所有的 [`required`](Gopkg.toml.zh.md#required) 声明必须存在于`Gopkg.lock`的[`input-imports`](Gopkg.lock.zh.md#input-imports)列表中 . | 对变化的项目，重新-求解, 更新 `Gopkg.lock` 和 `vendor/`  | Solving |
+| 在当前项目的 非-[`ignored`]((Gopkg.toml.zh.md#ignored)), 非-隐藏 包的 所有 `import` 声明 必须存在于`Gopkg.lock`的[`input-imports`](Gopkg.lock.zh.md#input-imports)列表中. | 对变化的项目，重新-求解, 更新 `Gopkg.lock` 和 `vendor/` | Solving |
+| [`Gopkg.lock`的 所有 versions](Gopkg.lock.zh.md#version-information-revision-version-and-branch) 必须接受和遵循 `Gopkg.toml` 的 `[[constraint]]` 或 `[[override]]` 声明模式 . | 对变化的项目，重新-求解, 更新 `Gopkg.lock` 和 `vendor/` | Solving |
+| `Gopkg.lock`中 每个 `[[project]]` 的 [`pruneopts`](Gopkg.lock.zh.md#pruneopts)  必须等于  `Gopkg.toml`中的声明. | 更新 `Gopkg.lock` 和 `vendor/` | Vendoring\* |
+| `Gopkg.lock`中 每个`[[project]]` 的  [`digest`](Gopkg.lock.zh.md#digest) 必须等于 来自`vendor/`当前哈希内容的值 | 重生成`vendor/`的这个项目, 和 若有需要，更新 `Gopkg.lock`中的新digest | Vendoring |
 
-(\*)`pruneopts`有点奇怪,因为两者之间`Gopkg.toml`和`Gopkg.lock`,但这并不能解决问题.
+(\*)`pruneopts`有点奇怪,因为`Gopkg.toml`和`Gopkg.lock`之间不同步, 但这并不能触发**Solving**.
+
+<!-- HERE -->
 
 如果向前查看显示同步不变量已经满足,那么相应的函数不需要做任何工作;如果不满足,则dep采取解析步骤.无论哪种方式,什么时候`dep ensure`完成后,我们可以确信,我们处于"已知良好状态",所有的不变量保持不变.
 
-`dep check`将计算所有上述关系,如果任何不变量不成立,它将打印对去同步和出口1的描述.此行为可以在每个项目基础上禁用,使用[`noverify`Gopkg.toml田野](Gopkg.toml.md#noverify).
+`dep check`将计算所有上述关系,如果任何不变量不成立,它将打印对去同步和出口1的描述.此行为可以在每个项目基础上禁用,使用[`noverify`Gopkg.toml田野](Gopkg.toml.zh.md#noverify).
 
 ## `dep ensure`标志与行为变异
 
-每一个`dep ensure`各种标志会影响解决和发布功能的行为,甚至影响它们是否运行.一些标志也会暂时导致项目不同步.在DEP的基本模型的背景下思考这些效应是理解正在发生的事情的最快路径.
+每一个`dep ensure`各种标志会影响解决和发布功能的行为,甚至影响它们是否运行.一些标志也会暂时导致项目不同步.在Dep的基本模型的背景下思考这些效应是理解正在发生的事情的最快路径.
 
 ### `-no-vendor`和`-vendor-only`
 
-这两个标志是互斥的,并决定哪一个`dep ensure`这两个函数实际上是被执行的.经过`-no-vendor`只会导致解决函数的运行,导致创建一个新的`Gopkg.lock`;`-vendor-only`将跳过只解决版本管理功能,导致`vendor/`被重新填充`Gopkg.lock`.
+这两个标志是互斥的,并决定哪一个`dep ensure`这两个函数实际上是被执行的.经过`-no-vendor`只会导致求解函数的运行,导致创建一个新的`Gopkg.lock`;`-vendor-only`将跳过只解决版本管理功能,导致`vendor/`被重新填充`Gopkg.lock`.
 
 ![Flags to run only one or the other of dep's functions](assets/func-toggles.png)
 
@@ -84,11 +86,11 @@ dep的设计目标之一是它的两个"功能"最小化了它们所做的工作
 
 ### `-add`
 
-通用的目的`dep ensure -add`是为了便于将新的依赖项引入到DEPGRAM中.反之`-update`限于[源根](glossary.md#source-root),例如`github.com/foo/bar`)`-add`可以以任何包导入路径作为参数(例如`github.com/foo/bar`或`github.com/foo/bar/baz`)
+通用的目的`dep ensure -add`是为了便于将新的依赖项引入到DepGRAM中.反之`-update`限于[源根](glossary.zh.md#source-root),例如`github.com/foo/bar`)`-add`可以以任何包导入路径作为参数(例如`github.com/foo/bar`或`github.com/foo/bar/baz`)
 
 从概念上讲,有两种可能的东西`-add`可能是介绍.任何`dep ensure -add`运行将至少其中之一:
 
-1.  运行解决函数以生成新的`Gopkg.lock`用新的依赖(IES)
+1.  运行求解函数以生成新的`Gopkg.lock`用新的依赖(IES)
 2.  将版本约束附加到`Gopkg.toml`
 
 这意味着两个前提条件.`dep ensure -add`其中至少有一个必须满足:
@@ -115,7 +117,7 @@ $ dep ensure -add github.com/foo/bar@v1.0.0
 | `github.com/foo/bar` | N | Y | Infer version constraint from `Gopkg.lock` and add to `Gopkg.toml` |
 | `github.com/foo/bar` | Y | Y | **Immediate error:** nothing to do |
 
-对于任何路径`dep ensure -add`需要运行解决函数以便生成更新`Gopkg.lock`将来自CLI参数的相关信息应用于内存的表示.`Gopkg.toml`:
+对于任何路径`dep ensure -add`需要运行求解函数以便生成更新`Gopkg.lock`将来自CLI参数的相关信息应用于内存的表示.`Gopkg.toml`:
 
 ![Model modifications made by -add](assets/required-arrows.png)
 
@@ -133,7 +135,7 @@ If you run "dep ensure" again before actually importing it, it will disappear fr
 
 ### `-update`
 
-行为`dep ensure -update`与解决者自身的行为密切相关.关于这一点的完整细节是[求解参考材料](the-solver.md),但为了理解的目的`-update`我们可以简化一点.
+行为`dep ensure -update`与解决者自身的行为密切相关.关于这一点的完整细节是[求解参考材料](the-solver.zh.md),但为了理解的目的`-update`我们可以简化一点.
 
 第一,巩固讨论中的含义.[功能优化](#staying-in-sync)求解函数实际上考虑了预先存在的问题.`Gopkg.lock`运行时:
 
